@@ -36,3 +36,4 @@ def bgs_scraper():
         except requests.expections.ConnectTimeout:
             print i
             continue
+    return 0
