@@ -10,6 +10,9 @@ Created on Fri Jun 05 12:55:50 2015
 from bs4 import BeautifulSoup
 import csv
 import requests
+import re
+import unicodedata as ud
+
 
 def bgs_scraper():
     """
@@ -21,7 +24,8 @@ def bgs_scraper():
     f.writerow(["BGS ID", "BGS Reference"])
 
     # for i in xrange(1,10):
-    i = 1000000
+    i = 100
+    data2 = []
     for i in xrange(0, i):
         try:
             linker = "http://scans.bgs.ac.uk/sobi_scans/boreholes/%d" % i
@@ -31,9 +35,21 @@ def bgs_scraper():
                 boreholeReference = BeautifulSoup(r.text)
                 title = boreholeReference.title.text
                 # print i, title
-                f.writerow([i, title])
+                if title.startswith("Page 1"):
+                    list1 = [s for s in re.split("[|]", title)]
+                    a = list1[1]
+                    a = a.replace("Borehole", "")
+                    title = a.replace(" ", "")
+                # print title
+                input = str(i) + ',' + title
+                data2.append(input)
+
+                # f.writerow([i, title])
             print i
-        except requests.expections.ConnectTimeout:
+        except requests.exceptions.ConnectTimeout:
             print i
             continue
+    print data2
+    for item in data2:
+        f.writerow([item])
     return 0
